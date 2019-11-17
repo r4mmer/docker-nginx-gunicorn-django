@@ -1,0 +1,23 @@
+name: Docker Image CI
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker images
+      run: | 
+        TAG=$(date +%s)
+        docker build . --file Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG-sqlite3
+        docker build . --file Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG
+        docker tag r4mmer/django-gunicorn-nginx:$TAG r4mmer/django-gunicorn-nginx:latest
+    - name: Push the docker images
+      env:
+        DOCKER_USER: secrets.DOCKER_USER
+        DOCKER_PASSWD: secrets.DOCKER_PASSWD
+      run: | 
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWD
+        docker push r4mmer/django-gunicorn-nginx
+        docker push r4mmer/django-gunicorn-nginx:$TAG
+        docker push r4mmer/django-gunicorn-nginx:$TAG-sqlite3
