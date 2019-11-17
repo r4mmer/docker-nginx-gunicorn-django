@@ -1,0 +1,44 @@
+#!/bin/sh
+exec 2>&1
+
+source /etc/envvars
+
+django_cmd=${DJANGO_CMD}
+GUNICORN=/usr/local/bin/gunicorn
+ROOT=/app
+PID=/var/run/gunicorn.pid
+APP=${DJANGO_APP}.wsgi
+
+if [ -f $PID ]; then rm $PID; fi
+cd $ROOT
+
+mkdir -p /root/.ssh/
+chown -R root:root /root/.ssh
+
+# test for migrations synced with models
+$django_cmd makemigrations --dry-run --check
+if [ ! $? -eq 0 ]; then
+    # migrations not synced
+    # should fail
+    echo "[-] Migrations are not synced with the models"
+    exit 1
+fi
+
+# test for db synced with migrations
+$django_cmd showmigrations -p --no-color | awk '{$NF=""; print $0}' | grep -v '[X]'
+if [ $? -eq 0 ]; then
+    echo "[*] Database not synced"
+    # check for tenant-schemas as to not break the migration
+    pip freeze | grep -i '^django-tenant-schemas'
+    if [ $? -eq 0 ]; then
+      $django_cmd migrate_schemas
+    else
+      $django_cmd migrate
+    fi
+fi
+# XXX: collectstatic on your own Dockerfile, runit throws error if process restarts
+# collect static files
+# $django_cmd collectstatic
+
+# exec gunicorn -b 0.0.0.0:${DJANGO_PORT:=2345} ${DJANGO_APP}.wsgi --reload -w 1 --threads 1
+exec $GUNICORN -b unix:///tmp/gunicorn.sock -c /etc/gunicorn/gunicorn.conf.py --pid=$PID $APP

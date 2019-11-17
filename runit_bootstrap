@@ -1,0 +1,20 @@
+#!/bin/sh
+# it is not possible to pass environment variables to runit
+# so we just save them in a file which we can source from
+# run scripts.
+export > /etc/envvars
+
+for FILE in `ls /bootstrap/`
+do
+  echo "Testing $FILE"
+  if [[ ! -f $FILE ]]
+  then
+    echo "Running $FILE"
+    sh /bootstrap/$FILE
+  else
+    echo "W8 WAT???"
+  fi
+done
+exec /sbin/runsvdir /etc/service
+# exec /usr/sbin/runsvdir
+# exec /usr/sbin/runsvdir-start

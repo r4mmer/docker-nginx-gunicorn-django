@@ -1,0 +1,8 @@
+#!/bin/sh
+exec 2>&1
+set -e
+source /etc/envvars
+
+# Do something with nginx configuration?
+
+exec /usr/sbin/nginx -g "daemon off;"
