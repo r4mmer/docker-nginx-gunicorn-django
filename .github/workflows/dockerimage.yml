@@ -6,18 +6,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker images
-      run: |
-        TAG=$(date +%s)
-        docker build . --file Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG-sqlite3
-        docker build . --file Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG
-        docker tag r4mmer/django-gunicorn-nginx:$TAG r4mmer/django-gunicorn-nginx:latest
-    - name: Push the docker images
+    - name: Build and push the Docker images
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
       run: |
+        TAG=$(date +%s)
+        echo "[*] Building for tag '$TAG'"
+        echo "[+] sqlite3"
+        docker build . --file Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG
+        echo "[+] Postgres"
+        docker build . --file pg.Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG-postgres
+        echo "[+] MySQL"
+        docker build . --file mysql.Dockerfile --tag r4mmer/django-gunicorn-nginx:$TAG-mysql
+
+        echo "[*] Extra tags for latest"
+        docker tag r4mmer/django-gunicorn-nginx:$TAG         r4mmer/django-gunicorn-nginx:latest
+        docker tag r4mmer/django-gunicorn-nginx:$TAG-posgres r4mmer/django-gunicorn-nginx:latest-postgres
+        docker tag r4mmer/django-gunicorn-nginx:$TAG-mysql   r4mmer/django-gunicorn-nginx:latest-mysql
+
+        echo "[*] Login and push images"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWD
-        docker push r4mmer/django-gunicorn-nginx
         docker push r4mmer/django-gunicorn-nginx:$TAG
-        docker push r4mmer/django-gunicorn-nginx:$TAG-sqlite3
+        docker push r4mmer/django-gunicorn-nginx:$TAG-postgres
+        docker push r4mmer/django-gunicorn-nginx:$TAG-mysql
+        docker push r4mmer/django-gunicorn-nginx:latest
+        docker push r4mmer/django-gunicorn-nginx:latest-postgres
+        docker push r4mmer/django-gunicorn-nginx:latest-mysql
