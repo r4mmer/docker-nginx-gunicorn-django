@@ -2,6 +2,35 @@
 
 This container aims to be a simple stack for running a django app inside docker!
 
+# Setup
+
+Using runit as a process supervisor the container runs an nginx server and a process on gunicorn with your app
+
+If you want to extend the nginx configuration just add it to the `/etc/nginx/conf.d` folder
+
+To run another process (other than the django+gunicorn) add a folder on the /etc/service with your script (with the name `run`)
+```
+/etc/service
+  ├── gunicorn
+  │   └── run
+  ├── nginx
+  │   └── run
+  └── yourprocess
+      └── run
+```
+
+```
+                            ┌───────┐
+                 ┌──────────┤ runit ├────────┐
+  control process│          └───────┘        │ control process
+                 │                           │
+                 │                           │
+             ┌───┴───┐  unix socket ┌────────┴────────┐
+ http call ->│ nginx ├──────────────┤ gunicorn+django │
+             └───────┘              └─────────────────┘
+```
+
+
 # Basics
 
 "COPY" your project to the /app folder and define the "DJANGO_APP" as the name of your app
