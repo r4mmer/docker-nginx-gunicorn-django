@@ -30,13 +30,7 @@ COPY ./gunicorn/gunicorn.conf.py /etc/gunicorn/gunicorn.conf.py
 COPY runit_bootstrap /usr/sbin/runit_bootstrap
 RUN chmod 755 /usr/sbin/runit_bootstrap
 
-# Install libraries needed to install psycopg2 module (PostGreSQL)
-RUN apk update && \
-    pip install --no-cache-dir --upgrade pip && \
-    apk add --no-cache --virtual build-deps gcc python3-dev musl-dev && \
-    apk add --no-cache postgresql-dev && \
-    pip install --no-cache-dir psycopg2
-
+# Install libraries needed to install mysqlclient module
 RUN apk add --update --no-cache mariadb-connector-c-dev && \
 	  apk add --no-cache --virtual .build-deps mariadb-dev gcc musl-dev && \
 	  pip install --no-cache-dir mysqlclient && \

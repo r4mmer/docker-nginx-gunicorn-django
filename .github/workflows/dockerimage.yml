@@ -22,14 +22,14 @@ jobs:
 
         echo "[*] Extra tags for latest"
         docker tag r4mmer/django-gunicorn-nginx:$TAG         r4mmer/django-gunicorn-nginx:latest
-        docker tag r4mmer/django-gunicorn-nginx:$TAG-posgres r4mmer/django-gunicorn-nginx:latest-postgres
+        docker tag r4mmer/django-gunicorn-nginx:$TAG-postgres r4mmer/django-gunicorn-nginx:latest-postgres
         docker tag r4mmer/django-gunicorn-nginx:$TAG-mysql   r4mmer/django-gunicorn-nginx:latest-mysql
 
         echo "[*] Login and push images"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWD
         docker push r4mmer/django-gunicorn-nginx:$TAG
-        docker push r4mmer/django-gunicorn-nginx:$TAG-postgres
-        docker push r4mmer/django-gunicorn-nginx:$TAG-mysql
         docker push r4mmer/django-gunicorn-nginx:latest
+        docker push r4mmer/django-gunicorn-nginx:$TAG-postgres
         docker push r4mmer/django-gunicorn-nginx:latest-postgres
+        docker push r4mmer/django-gunicorn-nginx:$TAG-mysql
         docker push r4mmer/django-gunicorn-nginx:latest-mysql
