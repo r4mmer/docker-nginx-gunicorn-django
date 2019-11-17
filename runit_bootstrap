@@ -4,13 +4,13 @@
 # run scripts.
 export > /etc/envvars
 
-for FILE in `ls /bootstrap/`
+for FILE in `ls /bootstrap.d/`
 do
   echo "Testing $FILE"
   if [[ ! -f $FILE ]]
   then
     echo "Running $FILE"
-    sh /bootstrap/$FILE
+    sh /bootstrap.d/$FILE
   else
     echo "W8 WAT???"
   fi

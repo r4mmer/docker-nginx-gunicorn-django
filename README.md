@@ -68,5 +68,5 @@ ENV DJANGO_CMD="managecli"
 
 # Bootstraping
 
-If you have your own script you want to run at startup just COPY it to the /bootstrap folder
+If you have your own script you want to run at startup just COPY it to the /bootstrap.d folder
 

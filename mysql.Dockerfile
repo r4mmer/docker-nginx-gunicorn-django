@@ -20,8 +20,9 @@ RUN chown root:root /etc/service/nginx/run && \
 
 # configure gunicorn django app for runit
 COPY ./gunicorn/run /etc/service/gunicorn/run
-RUN chown root:root /etc/service/gunicorn/run && \
-    chmod u+x       /etc/service/gunicorn/run
+COPY ./gunicorn/collectstatic.sh /bootstrap/collectstatic.sh
+RUN chown root:root /etc/service/gunicorn/run /bootstrap/collectstatic.sh && \
+    chmod u+x       /etc/service/gunicorn/run /bootstrap/collectstatic.sh
 
 # configuration for nginx and gunicorn
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
