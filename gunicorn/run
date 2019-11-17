@@ -36,9 +36,5 @@ if [ $? -eq 0 ]; then
       $django_cmd migrate
     fi
 fi
-# XXX: collectstatic on your own Dockerfile, runit throws error if process restarts
-# collect static files
-# $django_cmd collectstatic
 
-# exec gunicorn -b 0.0.0.0:${DJANGO_PORT:=2345} ${DJANGO_APP}.wsgi --reload -w 1 --threads 1
 exec $GUNICORN -b unix:///tmp/gunicorn.sock -c /etc/gunicorn/gunicorn.conf.py --pid=$PID $APP

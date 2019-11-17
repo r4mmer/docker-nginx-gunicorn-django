@@ -16,5 +16,3 @@ do
   fi
 done
 exec /sbin/runsvdir /etc/service
-# exec /usr/sbin/runsvdir
-# exec /usr/sbin/runsvdir-start

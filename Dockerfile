@@ -6,6 +6,7 @@ ENV DJANGO_APP="proj_name"
 ENV DJANGO_CMD="python /app/manage.py"
 
 RUN touch /etc/inittab && \
+    mkdir -p /bootstrap /bootstrap.d && \
     apk --no-cache update && \
     apk add --no-cache nginx runit && \
     pip install --no-cache-dir --upgrade pip && \
