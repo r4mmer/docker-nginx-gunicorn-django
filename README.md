@@ -1,5 +1,5 @@
 # Django stack for docker
-
+![](https://github.com/r4mmer/docker-nginx-gunicorn-django/workflows/Docker%20Build/badge.svg)
 This container aims to be a simple stack for running a django app inside docker!
 
 # Setup
