@@ -28,13 +28,22 @@ fi
 $django_cmd showmigrations -p --no-color | awk '{$NF=""; print $0}' | grep -v '[X]'
 if [ $? -eq 0 ]; then
     echo "[*] Database not synced"
-    # check for tenant-schemas as to not break the migration
+    # check for tenant-schemas/django-tenants as to not break the migration
+    tenant_migrate=0
+
+    pip freeze | grep -i '^django-tenants'
+    if [ $? -eq 0 ]; then
+      tenant_migrate=1
+      $django_cmd migrate_schemas
+    fi
+
     pip freeze | grep -i '^django-tenant-schemas'
     if [ $? -eq 0 ]; then
+      tenant_migrate=1
       $django_cmd migrate_schemas
-    else
-      $django_cmd migrate
     fi
+
+    if [ $tenant_migrate -eq 0 ]; then $django_cmd migrate; fi
 fi
 
 exec $GUNICORN -b unix:///tmp/gunicorn.sock -c /etc/gunicorn/gunicorn.conf.py --pid=$PID $APP

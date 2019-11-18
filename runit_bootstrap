@@ -10,9 +10,8 @@ do
   if [[ ! -f $FILE ]]
   then
     echo "Running $FILE"
+    echo "sh /bootstrap.d/$FILE"
     sh /bootstrap.d/$FILE
-  else
-    echo "W8 WAT???"
   fi
 done
 exec /sbin/runsvdir /etc/service
