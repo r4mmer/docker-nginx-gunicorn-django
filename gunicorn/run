@@ -4,6 +4,7 @@ exec 2>&1
 source /etc/envvars
 
 django_cmd=${DJANGO_CMD}
+test_models=${DJANGO_TEST_MODELS}
 GUNICORN=/usr/local/bin/gunicorn
 ROOT=/app
 PID=/var/run/gunicorn.pid
@@ -15,14 +16,18 @@ cd $ROOT
 mkdir -p /root/.ssh/
 chown -R root:root /root/.ssh
 
-# test for migrations synced with models
-$django_cmd makemigrations --dry-run --check
-if [ ! $? -eq 0 ]; then
-    # migrations not synced
-    # should fail
-    echo "[-] Migrations are not synced with the models"
-    exit 1
+# XXX: skip test for migrations if need be
+if [ $test_models -gt 0 ]; then
+  # test for migrations synced with models
+  $django_cmd makemigrations --dry-run --check
+  if [ ! $? -eq 0 ]; then
+      # migrations not synced
+      # should fail
+      echo "[-] Migrations are not synced with the models"
+      exit 1
+  fi
 fi
+
 
 # test for db synced with migrations
 $django_cmd showmigrations -p --no-color | awk '{$NF=""; print $0}' | grep -v '[X]'

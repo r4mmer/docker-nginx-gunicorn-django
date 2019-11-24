@@ -4,6 +4,7 @@ MAINTAINER André Carneiro <acarneiro.dev@gmail.com>
 
 ENV DJANGO_APP="proj_name"
 ENV DJANGO_CMD="python /app/manage.py"
+ENV DJANGO_TEST_MODELS=1
 
 RUN touch /etc/inittab && \
     mkdir -p /bootstrap /bootstrap.d && \
